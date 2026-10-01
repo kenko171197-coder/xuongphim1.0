@@ -171,7 +171,7 @@ async function startServer() {
     const style = str(req.body?.style, 600);
     const { location, image, extra } = validLocationRequest(req.body);
     const raw = await askJson(anglesParts(settings, idea, outline, style, location, image, extra), ANGLES_SCHEMA, 0.5, 'assets');
-    return { location: normalizeAngles(raw, location, style) };
+    return { location: normalizeAngles(raw, location, style, settings.aspect) };
   }));
 
   // Bước 4 — shot list cho một scene (viết mới hoặc sửa theo góp ý)

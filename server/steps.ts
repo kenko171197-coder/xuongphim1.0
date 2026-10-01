@@ -321,7 +321,7 @@ export function normalizeAssets(raw: any, outline: Outline, style: string): Asse
       const angles = (Array.isArray(l?.angles) ? l.angles : []).slice(0, 4).map((g: any, i: number) => {
         const id = ids[i];
         // Lượt 1 chỉ có prompt góc a. Góc phụ viết ở lượt 2, khi đã nhìn thấy ảnh góc a thật.
-        const prompt = i === 0 ? str(g?.prompt, 2000) : '';
+        const prompt = i === 0 ? plainPrompt(str(g?.prompt, 2000)) : '';
         return { id, tag: `${tag}-${id}`, vi: str(g?.vi, 400), en: str(g?.en, 400), light: str(g?.light, 200), prompt };
       });
       if (angles.length < 2) warnings.push(`Bối cảnh @${tag} chỉ có ${angles.length} góc máy — nên có 2–4 góc.`);
@@ -347,6 +347,14 @@ export function normalizeAssets(raw: any, outline: Outline, style: string): Asse
   return { style, characters, props, locations, warnings: Array.from(new Set(warnings)) };
 }
 
+/** Prompt ảnh bối cảnh không chứa @tag: "@khanban (the red tablecloth)" → "the red tablecloth"; "@bep" đứng riêng → bỏ */
+export const plainPrompt = (s: string) =>
+  s
+    .replace(/@[a-z0-9-]+\s*\(([^)]*)\)/gi, '$1')
+    .replace(/\s*@[a-z0-9-]+/gi, '')
+    .replace(/[ \t]{2,}/g, ' ')
+    .trim();
+
 /* =============================== BƯỚC 3 · BỐI CẢNH LƯỢT 2 =============================== */
 // Đọc ảnh góc a thật → sửa sơ đồ theo ảnh → viết prompt các góc phụ.
 
@@ -355,7 +363,12 @@ export const ANGLES_SCHEMA = OBJ({
   layout: S('Sơ đồ viết lại theo ảnh thật — tiếng Việt, nhiều dòng'),
   scale: S(),
   angles: LIST(
-    OBJ({ id: S('b, c hoặc d'), vi: S(), en: S(), light: S(), prompt: S('Prompt góc phụ theo khuôn "Prompt góc phụ (lượt 2)"') }),
+    OBJ({
+      id: S('b, c hoặc d'),
+      vi: S(),
+      en: S('Mô tả máy bằng tiếng Anh, NGẮN (1–2 câu): máy đứng đâu, độ cao, nhìn hướng nào, cỡ cảnh; rồi "left: …; center: …; right: …" theo đồ vật THẤY TRONG ẢNH góc a. Đây chính là phần ép đổi góc, app ghép thẳng vào prompt'),
+      light: S('Hướng sáng trong khung mới, tiếng Anh'),
+    }),
     '1–3 góc phụ'
   ),
   warnings: LIST(S('Chỗ ảnh thật lệch outline/sơ đồ, hoặc lỗi của ảnh góc a')),
@@ -392,23 +405,27 @@ Làm lần lượt:
 2. "layout": viết lại sơ đồ theo ảnh thật, giữ quy tắc đặt máy cùng một phía đường trục.
 3. "scale": tỉ lệ so với nhân vật.
 4. "angles": 1–3 góc phụ (id b, c, d) theo mục "Chọn góc phụ — ưu tiên góc dễ tạo", phục vụ các scene dùng bối cảnh này.
-   Mỗi prompt theo đúng khuôn "Prompt góc phụ (lượt 2)", đủ năm phần, gọi đúng tên đồ vật thấy trong ảnh.
+   Mỗi góc chỉ cần "vi", "en", "light" — app tự ghép prompt từ "en" và "light". "en" viết ngắn, gọi đúng tên đồ vật thấy trong ảnh, nêu rõ cái gì ở trái / giữa / phải khung.
 5. "warnings": chỗ ảnh thật lệch outline hoặc sơ đồ; lỗi của ảnh góc a (có nhân vật, có chữ, đồ vật lạ không có trong mô tả).${extra ? `\n\nYêu cầu thêm của người dùng: ${extra}` : ''}`,
   });
   return [{ text }, { text: `Ảnh góc a (@${a.tag}):` }, { inlineData: { mimeType: image.mime, data: image.data } }];
 }
 
-const ANGLE_GUARD = 'NEW CAMERA ANGLE of the same room shown in the reference image. Use the reference ONLY for the room\'s design (walls, floor, furniture, materials, colors, style). Do NOT reuse its framing or camera position.';
+const ANGLE_GUARD = 'Same room as the reference image: keep its design, furniture, materials and colors exactly, but from a NEW camera position — do not reuse its framing.';
 
-export function normalizeAngles(raw: any, location: LocationAsset, style: string): LocationAsset & { seen: string; angleWarnings: string[] } {
+export function normalizeAngles(raw: any, location: LocationAsset, style: string, aspect = '9:16'): LocationAsset & { seen: string; angleWarnings: string[] } {
   const ids = ['b', 'c', 'd'];
   const angles = (Array.isArray(raw?.angles) ? raw.angles : [])
     .slice(0, 3)
     .map((g: any, i: number) => {
       const id = ids[i];
-      let prompt = str(g?.prompt, 3000);
-      if (prompt && !/new camera angle/i.test(prompt)) prompt = `${style}.\n${ANGLE_GUARD}\n${prompt}`;
-      return { id, tag: `${location.tag}-${id}`, vi: str(g?.vi, 400), en: str(g?.en, 400), light: str(g?.light, 200), prompt };
+      // Prompt ngắn: người dùng thử thấy "mô tả máy" (en) + ảnh góc a cho kết quả đúng hơn prompt dài năm phần.
+      const en = plainPrompt(str(g?.en, 600)).replace(/[.\s]+$/, '');
+      const light = plainPrompt(str(g?.light, 200)).replace(/[.\s]+$/, '');
+      const prompt = en
+        ? [`${style}. ${aspect === '16:9' ? 'Horizontal 16:9' : 'Vertical 9:16'}.`, ANGLE_GUARD, `${en}.`, light ? `${light}.` : '', 'Empty room, no characters, no text.'].filter(Boolean).join('\n')
+        : '';
+      return { id, tag: `${location.tag}-${id}`, vi: str(g?.vi, 400), en, light, prompt };
     })
     .filter((g: any) => g.prompt);
   if (!angles.length) throw new Error('Gemini không trả về góc phụ nào. Thử lại.');

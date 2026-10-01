@@ -123,25 +123,26 @@ Chỉ chọn góc mà truyện thật sự cần. Hai góc tốt hơn bốn góc
 - Tả rõ bề mặt: "bare tiled floor", "plain wall" — những chỗ muốn trống thì nói rõ là trống.
 - Ghi tỉ lệ khung của phim (VD "Vertical 9:16").
 
-### Prompt góc phụ (lượt 2) — phải ép đổi góc máy
+### Prompt góc phụ (lượt 2) — ngắn, mô tả máy là chính
 
-Viết theo khuôn dưới đây, **đủ cả năm phần**:
+Người dùng đã thử: nạp ảnh góc a rồi dán đúng **mô tả máy** (trường `en` của góc) cho kết quả đúng hơn prompt dài.
+Vì vậy AI **chỉ viết `vi`, `en`, `light`**; app tự ghép prompt:
 
 ```
 {style}. {Vertical 9:16}.
-NEW CAMERA ANGLE of the same room shown in the reference image. Use the reference ONLY for the room's
-design (walls, floor, furniture, materials, colors, style). Do NOT reuse its framing or camera position.
-CAMERA: placed {ở đâu}, at {độ cao}, facing {hướng}, {cỡ cảnh: wide / medium / close}.
-FRAME LAYOUT: left side: {…}; center: {…}; right side: {…}; foreground: {…}; background: {…}.
-OUT OF FRAME: {những mốc của góc a không còn thấy — VD "the window is out of frame to the left"}.
-LIGHT: {hướng sáng trong khung mới, suy ra từ vị trí cửa sổ}.
-Every object keeps the same size and position in the room as in the reference image; nothing is added.
+Same room as the reference image: keep its design, furniture, materials and colors exactly, but from a NEW camera position — do not reuse its framing.
+{en}.
+{light}.
 Empty room, no characters, no text.
 ```
 
-- Mọi đồ vật gọi đúng như **thấy trong ảnh góc a** (VD ảnh có bếp lò trắng, bồn rửa, kệ gia vị gỗ → gọi đúng tên đó).
-- FRAME LAYOUT phải **khác rõ** bố cục góc a; nếu gần giống thì góc đó thừa.
+`en` là 1–2 câu: máy đứng đâu, độ cao, nhìn hướng nào, cỡ cảnh; rồi `left: …; center: …; right: …` bằng tên đồ vật
+**thấy trong ảnh góc a** (VD ảnh có bếp lò trắng, bồn rửa, kệ gia vị gỗ → gọi đúng tên đó).
+VD: `Low eye-level view from the right corner of the kitchen toward the window wall: left: white stove and sink; center: window with white curtains; right: edge of the wooden table.`
+
+- `en` phải **khác rõ** bố cục góc a; nếu gần giống thì góc đó thừa.
 - Đồ vật ở tiền cảnh chỉ được là thứ **đã có trong phòng**, đúng kích thước. Không phóng to đồ vật để "tạo tiền cảnh".
+- Không dùng @tag trong `en` và prompt bối cảnh.
 
 ## Ví dụ bối cảnh
 

@@ -359,7 +359,7 @@ export function assembleClipPrompt(raw: any, r: ClipPromptRequest): ClipPrompt {
 
   // [1] style · [2] bối cảnh
   const block1 = `${r.assets.style}. ${aspectLine(r.settings.aspect)}.`;
-  const block2 = [`Location: @${c.location} (${loc?.desc || c.location}).`, time ? `${time}.` : '', state ? `Current state: ${state}` : ''].filter(Boolean).join(' ');
+  const block2 = [`Location: ${loc?.desc || c.location}.`, time ? `${time}.` : '', state ? `Current state: ${state}` : ''].filter(Boolean).join(' ');
 
   // [3] tham chiếu
   let block3 = '';
