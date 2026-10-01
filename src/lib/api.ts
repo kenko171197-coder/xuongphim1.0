@@ -3,7 +3,7 @@ import { keysHeader, loadKeyOrder } from './apiKeys';
 import { modelPrefsHeader } from './modelPrefs';
 import { recordUsage } from './usage';
 import type { Assets, Clip, ClipPrompt, Idea, IdeaMode, LocationAsset, Outline, Project, ProjectSettings, Review, SceneShots, ScriptType } from '../../shared/types';
-import { previousClip, stateBefore } from '../../shared/types';
+import { frameTag, previousClip, stateBefore } from '../../shared/types';
 
 async function post<T>(url: string, body: unknown, projectId?: string): Promise<T> {
   let res: Response;
@@ -80,9 +80,25 @@ export const requestShots = (p: Project, sceneId: string, feedback = '', previou
 export const requestClipPrompt = (p: Project, clip: Clip, feedback = '') =>
   post<{ prompt: ClipPrompt }>(
     '/api/clip-prompt',
-    { settings: p.settings, assets: p.assets, clip, state: stateBefore(p, clip.id), timeOfDay: p.outline?.scenes.find((s) => s.id === clip.scene)?.timeOfDay || '', feedback },
+    {
+      settings: p.settings,
+      assets: p.assets,
+      clip,
+      state: stateBefore(p, clip.id),
+      timeOfDay: p.outline?.scenes.find((s) => s.id === clip.scene)?.timeOfDay || '',
+      feedback,
+      ...continuity(p, clip),
+    },
     p.id
   );
+
+/** Clip ngay trước cùng bối cảnh: khung cuối (chữ) và tag ảnh khung cuối thật nếu đã lưu */
+function continuity(p: Project, clip: Clip) {
+  const prev = previousClip(p, clip.id);
+  if (!prev || prev.location !== clip.location) return {};
+  const tag = frameTag(prev.id, 'cuoi');
+  return { prevEnd: prev.lastFrame, prevFrameTag: p.images[tag] ? tag : '' };
+}
 
 /** Bước 6: duyệt clip đã chạy */
 export const requestReview = (p: Project, clip: Clip, note: string, images: { mime: string; data: string }[], checkFrame: boolean) =>

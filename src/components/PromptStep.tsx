@@ -1,9 +1,9 @@
 import { useState, type ReactNode } from 'react';
 import type { Clip, Project } from '../../shared/types';
-import { FLOW_MODE_LABEL, allClips, clipHash, frameTag, previousClip } from '../../shared/types';
+import { FLOW_MODE_LABEL, allClips, clipHash, frameTag, imageSlots, previousClip } from '../../shared/types';
 import { requestClipPrompt } from '../lib/api';
 import { saveProject } from '../lib/store';
-import { getImage, putImage } from '../lib/images';
+import { downloadDataUrl, getImage, putImage } from '../lib/images';
 import { Slot } from './ImageSlot';
 import { Button, CopyBlock, ErrorNote, Tag, Warnings, inputCls, useImage } from './ui';
 import { Difficulty } from './ClipView';
@@ -117,10 +117,17 @@ function ClipPromptCard({ project, clip: c, busy, disabled, onCompile }: { proje
             {p.added.length > 0 && <Warnings title="AI đã thêm chi tiết không có trong shot list" items={p.added} />}
 
             <div>
-              <p className="font-semibold mb-2">Ảnh cần nạp trong Flow ({c.mode === 'nguyen-lieu' ? 'Ingredients to video' : 'Frames to video'})</p>
+              <p className="font-semibold mb-2">Cách làm trong Flow ({c.mode === 'nguyen-lieu' ? 'Ingredients to video' : 'Frames to video'})</p>
               {c.mode === 'nguyen-lieu' ? (
-                <div className="flex flex-wrap gap-3">
-                  {p.load.map((t) => <RefThumb key={t} project={project} tag={t} />)}
+                <div className="space-y-3">
+                  <ol className="text-sm list-decimal pl-5 space-y-1">
+                    <li>Trong Flow chọn <b>Ingredients to video</b>, model Gemini Omni Flash.</li>
+                    <li>Nạp <b>đúng {p.load.length} ảnh dưới đây, theo thứ tự Ảnh 1 → Ảnh {p.load.length}</b> (bấm "Tải về" rồi kéo vào Flow). Thứ tự này khớp với dòng "Image N" trong prompt.</li>
+                    <li>Dán prompt video ở dưới vào ô prompt, rồi tạo.</li>
+                  </ol>
+                  <div className="flex flex-wrap gap-3">
+                    {p.load.map((t, i) => <RefThumb key={t} project={project} tag={t} n={i + 1} />)}
+                  </div>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -175,14 +182,24 @@ function FrameRow(props: { project: Project; label: string; tag: string; prompt:
 }
 
 /** Ảnh nhỏ của một tài sản cần nạp; đỏ nếu chưa có ảnh */
-function RefThumb({ project, tag }: { project: Project; tag: string }) {
+function RefThumb({ project, tag, n }: { project: Project; tag: string; n: number }) {
   const url = useImage(project.images[tag]);
+  const role = imageSlots(project.assets).find((s) => s.tag === tag)?.label || (/-cuoi$/.test(tag) ? 'Khung cuối clip trước (nối cảnh)' : 'Tham chiếu');
   return (
-    <figure className="w-24 text-center">
-      <div className={`w-24 h-24 rounded-md overflow-hidden grid place-items-center ${url ? 'bg-paper border border-line' : 'border-2 border-dashed border-bad text-bad text-xs p-1'}`}>
+    <figure className="w-28 text-center">
+      <p className="text-sm font-bold mb-1">Ảnh {n}</p>
+      <div className={`w-28 h-28 rounded-md overflow-hidden grid place-items-center ${url ? 'bg-paper border border-line' : 'border-2 border-dashed border-bad text-bad text-xs p-1'}`}>
         {url ? <img src={url} alt={`@${tag}`} className="w-full h-full object-contain" /> : 'Chưa có ảnh'}
       </div>
-      <figcaption className="mt-1"><Tag tag={tag} /></figcaption>
+      <figcaption className="mt-1 space-y-0.5">
+        <Tag tag={tag} />
+        <span className="block text-xs text-mute">{role}</span>
+        {url && (
+          <button type="button" className="text-xs hover:underline underline-offset-4" onClick={() => downloadDataUrl(url, `${n}-${tag}.jpg`)}>
+            Tải về
+          </button>
+        )}
+      </figcaption>
     </figure>
   );
 }

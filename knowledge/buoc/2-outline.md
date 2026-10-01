@@ -24,7 +24,11 @@ viết góc máy.
 - `tag`, mô tả một dòng, dùng ở scene nào.
 - **Mốc cố định** quan trọng cho câu chuyện (cửa sổ, lỗ chuột, bàn, cầu thang) và chúng nằm ở đâu so với nhau.
 
-**Đạo cụ chính** — chỉ đạo cụ xuất hiện từ 2 clip trở lên hoặc có hình dạng quan trọng cho hành động:
+**Đạo cụ chính** — chỉ vật mà nhân vật **tác động trực tiếp** (cầm, ném, đẩy, kéo, làm đổ vỡ, đổi trạng thái) ở từ 2 clip trở lên,
+hoặc có hình dạng quan trọng cho hành động. **Đồ bối cảnh không phải đạo cụ**: bàn ghế, khăn trải bàn, rèm, đĩa chén,
+lọ trên kệ, tranh… là một phần căn phòng, nằm trong ảnh bối cảnh, KHÔNG làm tài sản riêng — kể cả khi có một clip
+nhân vật chạm vào nó (khi đó tả bằng chữ trong shot list). Muốn hỏi: "bỏ vật này đi thì hành động của clip còn làm được không?" —
+còn làm được thì nó là đồ bối cảnh. Phim ngắn thường chỉ 1–3 đạo cụ chính; quá 4 thì xem lại.
 - `tag`, vai trò trong truyện, hình dạng cần có để hành động làm được (VD hộp phải mở nắp mới úp được).
 - Trạng thái sau (nếu có): tag biến thể (`@baykep-sap`) và scene nó bắt đầu.
 

@@ -197,7 +197,7 @@ async function startServer() {
     const settings = validSettings(req.body?.settings);
     const assets = needAssets(req.body);
     const clip = needClip(req.body);
-    const r = { settings, assets, clip, state: str(req.body?.state, 1500), timeOfDay: str(req.body?.timeOfDay, 40), feedback: str(req.body?.feedback, 1500) };
+    const r = { settings, assets, clip, state: str(req.body?.state, 1500), timeOfDay: str(req.body?.timeOfDay, 40), feedback: str(req.body?.feedback, 1500), prevEnd: str(req.body?.prevEnd, 1500), prevFrameTag: /^[a-z0-9-]{1,40}$/.test(String(req.body?.prevFrameTag || '')) ? String(req.body.prevFrameTag) : '' };
     const raw = await askJson(clipPromptText(r), CLIP_PROMPT_SCHEMA, 0.4, 'prompt');
     return { prompt: assembleClipPrompt(raw, r) };
   }));

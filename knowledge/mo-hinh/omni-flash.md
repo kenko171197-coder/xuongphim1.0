@@ -55,15 +55,20 @@ light from the window on the left side of the frame.`
 
 ## 3. Khối [3] theo chế độ
 
-**Nguyên liệu** — mỗi ảnh nạp một dòng, ghi vai trò:
+**Nguyên liệu** — mỗi ảnh nạp một dòng, đánh số theo **đúng thứ tự người dùng nạp vào Flow** (nhân vật → đạo cụ →
+trạng thái sau → bối cảnh → khung cuối thật của clip trước, nếu có), ghi vai trò:
 ```
-@muop (the orange tabby cat): character reference.
-@baykep (the small wooden snap trap): prop reference.
-@bep-a (the sunny wooden kitchen, main view): location reference; match this view.
-@bep-b (the sunny wooden kitchen, view toward the window): location reference only — use its architecture,
+Image 1 — @muop (the orange tabby cat): character reference.
+Image 2 — @baykep (the small wooden snap trap): prop reference.
+Image 3 — @bep-a (the sunny wooden kitchen, main view): location reference; match this view.
+Image 4 — @bep-b (the sunny wooden kitchen, view toward the window): location reference only — use its architecture,
   materials and colors; do not copy its composition.
+Image 5 — @s1-c01-cuoi (the final frame of the previous clip): continuity reference — keep the room, object positions
+  and character designs exactly as shown; this clip continues from that moment.
 Use the given images as references for the video. They are not the first frame.
 ```
+- Khung cuối thật của clip trước chỉ có khi người dùng đã lưu ở bước Duyệt và sửa; cùng bối cảnh với clip này.
+- Chỉ nạp tài sản **nhìn thấy trong khung**; ảnh nạp thừa làm model vẽ bừa.
 - Ảnh góc máy trùng với góc của shot → `match this view`. Khác → `location reference only…`.
 - Clip chứa khoảnh khắc đổi trạng thái nạp cả hai ảnh, ghi vai trò theo shot:
   `@baykep (…): the trap before it snaps, shot 1 only.` · `@baykep-sap (…): the same trap after it snaps, shot 2 only.`
@@ -121,3 +126,5 @@ designs identical. A single still frame, no motion blur, no text.
 - Chữ `@tag` trong prompt có bị vẽ thành chữ trên hình không (hiện chưa gặp).
 - Shot neo 0,5–1 giây có giữ được vị trí nhân vật qua các shot sau không.
 - Mốc giây ngắn (dưới 2 giây) có được tôn trọng không.
+- Dòng `Image N —` có giúp Omni gắn đúng ảnh với @tag không, hay chỉ cần cụm mô tả là đủ.
+- Ảnh khung cuối clip trước nạp làm nguyên liệu có giữ liền mạch phòng và vị trí đồ vật không.

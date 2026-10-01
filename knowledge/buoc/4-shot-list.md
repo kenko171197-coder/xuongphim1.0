@@ -22,7 +22,7 @@ quyết định thêm. Người dùng đọc và sửa trực tiếp kết quả
 ```
 CLIP [scene]-C[số] · [giây] · chế độ: nguyên liệu | khung đầu | khung đầu + cuối · độ khó [1–5]/5
 Chuyển biến: [một câu — clip này thay đổi điều gì]
-Bối cảnh: @tag · Ảnh nạp: [mọi tài sản có mặt trong clip + ảnh góc máy mà các shot dùng. Chế độ khung đầu: đây là các ảnh dùng để tạo ảnh khung đầu]
+Bối cảnh: @tag · Ảnh nạp: [CHỈ tài sản thật sự nhìn thấy trong khung của clip + ảnh góc máy mà các shot dùng. Vật không có trong khung thì KHÔNG nạp — mỗi ảnh nạp thừa là một thứ model vẽ bừa vào cảnh. Chế độ khung đầu: đây là các ảnh dùng để tạo ảnh khung đầu]
 Tình huống: [id module, nếu có]
 Khoá: [số nhân vật · ai bên trái / phải · ai cầm gì ở shot nào]
 Khung đầu: [chỉ khi chế độ khung đầu — mô tả tư thế tĩnh của mọi thứ trong khung]
@@ -32,7 +32,7 @@ Shot 1 [a-bs] · góc [id] · [cỡ cảnh] · [chuyển động máy]
 Shot 2 …
 Âm thanh: [tiếng động theo thời điểm] · thoại: [có/không] · nhạc: [có/không]
 Thay đổi còn lưu sau clip: [TOÀN BỘ trạng thái còn hiệu lực tính đến hết clip, cộng dồn từ các clip trước cùng bối cảnh; không có thì ghi "—"]
-Khung cuối: [khi clip sau dùng chế độ khung đầu, hoặc chế độ của clip này là khung đầu + cuối]
+Khung cuối: [LUÔN có, mọi clip — tư thế đứng yên của mọi nhân vật và vật cuối clip, theo trái/phải, gần/xa. Clip sau bắt đầu đúng từ đây]
 Rủi ro: [một dòng, nếu có]
 ```
 
@@ -52,6 +52,22 @@ Cuối scene trả thêm: **tài sản còn thiếu** (tag cần ảnh mà chưa
 - **Mỗi clip chọn các module tình huống liên quan** từ mục lục và tuân theo nửa "Khi viết shot list" của chúng.
 - **Độ khó**: 1 = một nhân vật, máy đứng yên, cử động nhỏ · 3 = tương tác vật lý hoặc 2–3 nhân vật ·
   5 = chuỗi va chạm, chuyển động nhanh, nhiều nhân vật. Độ khó ≥4 → xem lại có tách hoặc giấu được không.
+
+## Liền mạch trong một scene (quan trọng)
+
+Mỗi clip Flow tạo ra độc lập; không có gì tự giữ phòng, vị trí đồ vật, trang phục từ clip này sang clip sau.
+Nên liền mạch phải được **cài vào dữ liệu**:
+
+- **Mọi clip có "Khung cuối"**. **Shot 1 của clip sau, mục "Ai ở đâu", chép đúng vị trí trong "Khung cuối" của clip trước**
+  (cùng trái/phải, cùng chỗ đồ vật), rồi mới tới hành động mới. Không tự dựng lại cảnh từ đầu.
+- **Mọi vật nhìn thấy trong khung đều ghi ở "Ai ở đâu" của shot đó**, kể cả vật không hoạt động (đĩa cá trên bàn, vòng keo).
+  Không ghi thì model tự vẽ thứ khác vào chỗ đó. Shot không có vật nào trong số "Thay đổi còn lưu" thì ghi rõ vì sao (ngoài khung).
+- **Shot kiểu "establishing" 0,5–1 giây ở đầu clip** chỉ dùng khi thật cần; shot ngắn như vậy model hay vẽ sai bố cục. Ưu tiên
+  shot đầu ≥ 2 giây, rộng đủ thấy mọi nhân vật và vật chính.
+- **Clip sau cùng scene, cùng góc máy, không có nhân vật mới vào khung → dùng chế độ khung đầu**, khung đầu là ảnh chụp
+  khung cuối thật của clip trước. Có nhân vật hoặc vật mới vào khung, hoặc đổi góc → chế độ nguyên liệu; app tự nạp thêm
+  khung cuối thật của clip trước làm ảnh tham chiếu liền mạch.
+- Clip chạy theo thứ tự trong scene (C01 → C02 → …), để mỗi clip có khung cuối thật của clip trước.
 
 ## Chọn chế độ Flow cho từng clip
 
@@ -80,6 +96,8 @@ trước cùng bối cảnh. VD clip 2 bẫy sập, clip 4 lọ muối đổ →
 - Đọc liền "Chuyển biến" của các clip thấy câu chuyện của scene chạy đúng outline.
 - Clip đầu nối đúng trạng thái cuối của scene trước; clip cuối đạt đúng trạng thái cuối của scene này.
 - Không tag nào chưa có trong tài sản (trừ khi đã ghi vào "tài sản còn thiếu").
+- Mỗi tag trong "Ảnh nạp" đều được nhắc ở "Ai ở đâu" hoặc "Khoá" của ít nhất một shot, và ngược lại.
+- Shot 1 của clip sau khớp "Khung cuối" của clip trước.
 - Khoá trái/phải không bị lật giữa các clip.
 - Mọi "thay đổi còn lưu" từ clip trước có mặt ở clip sau.
 - Trạng thái cũ của đạo cụ không bị nạp sau khi đạo cụ đã đổi trạng thái.

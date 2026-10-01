@@ -15,6 +15,9 @@ rồi nạp ảnh về app gắn đúng tag. Gồm bốn phần: style, nhân v�
 
 **Chỉ làm tài sản cho thứ xuất hiện từ 2 clip trở lên** hoặc có hình dạng quan trọng cho hành động.
 Vai phụ xuất hiện một lần thì không cần tài sản, tả bằng chữ ở shot list.
+**Đồ bối cảnh (bàn, ghế, khăn trải bàn, rèm, đĩa chén, đồ trên kệ…) không làm tài sản riêng**: chúng nằm sẵn trong
+ảnh bối cảnh. Đạo cụ chỉ là vật nhân vật tác động trực tiếp. Nếu outline lỡ đưa đồ bối cảnh vào đạo cụ, bỏ nó khỏi
+danh sách tài sản và ghi vào `warnings` để người dùng biết.
 
 ## 1. Style của phim
 
@@ -113,8 +116,10 @@ Chỉ chọn góc mà truyện thật sự cần. Hai góc tốt hơn bốn góc
 ### Prompt góc a (lượt 1)
 
 - Tả đủ mọi mốc cố định với **vị trí trong khung** (trái / giữa / phải, gần / xa), chất liệu, màu.
-- **Không nhắc tag đạo cụ** trong prompt bối cảnh. Đồ nội thất cố định tả bằng lời thường.
-  (Nhắc "red checkered tablecloth" trong prompt bối cảnh từng làm mọc thêm cả tấm thảm caro dưới sàn.)
+- **Không nhắc tag đạo cụ** trong prompt bối cảnh. Đồ nội thất và đồ trang trí cố định (kể cả khăn trải bàn, rèm,
+  đĩa chén) tả bằng lời thường, kèm vị trí trong khung — vì chúng được sinh cùng căn phòng nên các clip sau giữ đồng bộ nhờ ảnh bối cảnh.
+  (Nếu tả khăn trải bàn mà không nói rõ chỗ khác, model từng cho mọc thêm tấm thảm caro dưới sàn; vì vậy luôn kèm
+  "bare tiled floor" và vị trí của khăn: "covering only the top of the round table".)
 - Tả rõ bề mặt: "bare tiled floor", "plain wall" — những chỗ muốn trống thì nói rõ là trống.
 - Ghi tỉ lệ khung của phim (VD "Vertical 9:16").
 
