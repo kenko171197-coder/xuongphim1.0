@@ -120,7 +120,7 @@ export default function ShotListStep({ project, kb, onNext }: { project: Project
             Clip của {scene.id}
           </SectionTitle>
           <p className="text-sm text-mute -mt-2 mb-4">
-            Thứ tự nên chạy (khó trước, nếu clip khó nhất ổn thì phần còn lại thường ổn): {order.map((c) => c.id).join(', ')}.
+            Chạy theo thứ tự {data.clips.map((c) => c.id).join(' → ')}: mỗi clip cần khung cuối thật của clip trước (lưu ở bước Duyệt và sửa) để nối liền mạch. Clip khó nhất là {order[0]?.id}; muốn thử trước thì thử xong vẫn chạy lại theo thứ tự.
           </p>
           <div className="space-y-6">
             {data.clips.map((c) => (

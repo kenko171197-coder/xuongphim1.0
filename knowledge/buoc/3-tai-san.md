@@ -15,6 +15,9 @@ rồi nạp ảnh về app gắn đúng tag. Gồm bốn phần: style, nhân v�
 
 **Chỉ làm tài sản cho thứ xuất hiện từ 2 clip trở lên** hoặc có hình dạng quan trọng cho hành động.
 Vai phụ xuất hiện một lần thì không cần tài sản, tả bằng chữ ở shot list.
+**Đồ bối cảnh (bàn, ghế, khăn trải bàn, rèm, đĩa chén, đồ trên kệ…) không làm tài sản riêng**: chúng nằm sẵn trong
+ảnh bối cảnh. Đạo cụ chỉ là vật nhân vật tác động trực tiếp. Nếu outline lỡ đưa đồ bối cảnh vào đạo cụ, bỏ nó khỏi
+danh sách tài sản và ghi vào `warnings` để người dùng biết.
 
 ## 1. Style của phim
 
@@ -113,30 +116,33 @@ Chỉ chọn góc mà truyện thật sự cần. Hai góc tốt hơn bốn góc
 ### Prompt góc a (lượt 1)
 
 - Tả đủ mọi mốc cố định với **vị trí trong khung** (trái / giữa / phải, gần / xa), chất liệu, màu.
-- **Không nhắc tag đạo cụ** trong prompt bối cảnh. Đồ nội thất cố định tả bằng lời thường.
-  (Nhắc "red checkered tablecloth" trong prompt bối cảnh từng làm mọc thêm cả tấm thảm caro dưới sàn.)
+- **Không nhắc tag đạo cụ** trong prompt bối cảnh. Đồ nội thất và đồ trang trí cố định (kể cả khăn trải bàn, rèm,
+  đĩa chén) tả bằng lời thường, kèm vị trí trong khung — vì chúng được sinh cùng căn phòng nên các clip sau giữ đồng bộ nhờ ảnh bối cảnh.
+  (Nếu tả khăn trải bàn mà không nói rõ chỗ khác, model từng cho mọc thêm tấm thảm caro dưới sàn; vì vậy luôn kèm
+  "bare tiled floor" và vị trí của khăn: "covering only the top of the round table".)
 - Tả rõ bề mặt: "bare tiled floor", "plain wall" — những chỗ muốn trống thì nói rõ là trống.
 - Ghi tỉ lệ khung của phim (VD "Vertical 9:16").
 
-### Prompt góc phụ (lượt 2) — phải ép đổi góc máy
+### Prompt góc phụ (lượt 2) — ngắn, mô tả máy là chính
 
-Viết theo khuôn dưới đây, **đủ cả năm phần**:
+Người dùng đã thử: nạp ảnh góc a rồi dán đúng **mô tả máy** (trường `en` của góc) cho kết quả đúng hơn prompt dài.
+Vì vậy AI **chỉ viết `vi`, `en`, `light`**; app tự ghép prompt:
 
 ```
 {style}. {Vertical 9:16}.
-NEW CAMERA ANGLE of the same room shown in the reference image. Use the reference ONLY for the room's
-design (walls, floor, furniture, materials, colors, style). Do NOT reuse its framing or camera position.
-CAMERA: placed {ở đâu}, at {độ cao}, facing {hướng}, {cỡ cảnh: wide / medium / close}.
-FRAME LAYOUT: left side: {…}; center: {…}; right side: {…}; foreground: {…}; background: {…}.
-OUT OF FRAME: {những mốc của góc a không còn thấy — VD "the window is out of frame to the left"}.
-LIGHT: {hướng sáng trong khung mới, suy ra từ vị trí cửa sổ}.
-Every object keeps the same size and position in the room as in the reference image; nothing is added.
+Same room as the reference image: keep its design, furniture, materials and colors exactly, but from a NEW camera position — do not reuse its framing.
+{en}.
+{light}.
 Empty room, no characters, no text.
 ```
 
-- Mọi đồ vật gọi đúng như **thấy trong ảnh góc a** (VD ảnh có bếp lò trắng, bồn rửa, kệ gia vị gỗ → gọi đúng tên đó).
-- FRAME LAYOUT phải **khác rõ** bố cục góc a; nếu gần giống thì góc đó thừa.
+`en` là 1–2 câu: máy đứng đâu, độ cao, nhìn hướng nào, cỡ cảnh; rồi `left: …; center: …; right: …` bằng tên đồ vật
+**thấy trong ảnh góc a** (VD ảnh có bếp lò trắng, bồn rửa, kệ gia vị gỗ → gọi đúng tên đó).
+VD: `Low eye-level view from the right corner of the kitchen toward the window wall: left: white stove and sink; center: window with white curtains; right: edge of the wooden table.`
+
+- `en` phải **khác rõ** bố cục góc a; nếu gần giống thì góc đó thừa.
 - Đồ vật ở tiền cảnh chỉ được là thứ **đã có trong phòng**, đúng kích thước. Không phóng to đồ vật để "tạo tiền cảnh".
+- Không dùng @tag trong `en` và prompt bối cảnh.
 
 ## Ví dụ bối cảnh
 

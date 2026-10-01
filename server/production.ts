@@ -85,7 +85,7 @@ export const SHOTS_SCHEMA = OBJ({
       situations: LIST(S('id module tình huống')),
       locks: S('Khoá: số nhân vật, ai bên trái/phải, ai cầm gì ở shot nào'),
       firstFrame: S('Mô tả khung đầu — bắt buộc với chế độ khung-dau, khung-dau-cuoi; rỗng nếu không cần'),
-      lastFrame: S('Mô tả khung cuối — khi clip sau dùng khung đầu hoặc chế độ khung-dau-cuoi; rỗng nếu không cần'),
+      lastFrame: S('Mô tả khung cuối — LUÔN có, mọi clip: tư thế đứng yên của mọi nhân vật và vật cuối clip (trái/phải, gần/xa). Clip sau bắt đầu từ đây'),
       shots: LIST(
         OBJ({
           from: N('giây bắt đầu'),
@@ -209,7 +209,7 @@ export function normalizeShots(raw: any, r: ShotsRequest): SceneShots {
       }
     });
     shots.forEach((s) => assets.add(`${scene.location}-${s.angle}`));
-    const list = Array.from(assets).filter((t) => index.has(t));
+    let list = Array.from(assets).filter((t) => index.has(t));
     if (list.length > maxRefs) warnings.push(`${id} cần ${list.length} ảnh, vượt giới hạn ${maxRefs} ảnh nguyên liệu.`);
 
     // Tag nhắc trong mô tả mà không có trong tài sản của clip
@@ -217,8 +217,21 @@ export function normalizeShots(raw: any, r: ShotsRequest): SceneShots {
     const mentioned = Array.from(new Set((text.match(/@[a-z0-9-]+/g) || []).map((m) => m.slice(1))));
     mentioned.filter((t) => !assets.has(t)).forEach((t) => warnings.push(`${id} nhắc @${t} trong shot nhưng không có trong "Ảnh nạp".`));
 
+    // Ảnh nạp thừa: tài sản không được nhắc ở shot, Khoá hay khung nào thì không có trong cảnh → bỏ, tránh model vẽ bừa
+    const everywhere = new Set(
+      ((`${text} ${str(c?.locks, 800)} ${str(c?.firstFrame, 1200)} ${str(c?.lastFrame, 1200)}`).match(/@[a-z0-9-]+/g) || []).map((m) => m.slice(1))
+    );
+    const used = (t: string) => everywhere.has(t) || index.get(t)?.kind === 'angle' || (index.get(t)?.kind === 'prop' && list.some((v) => index.get(v)?.parent === t && everywhere.has(v)));
+    const extra = list.filter((t) => !used(t));
+    if (extra.length) {
+      warnings.push(`${id}: bỏ ${extra.map((t) => '@' + t).join(', ')} khỏi "Ảnh nạp" vì không được nhắc trong shot nào. Nếu vật đó có trong khung, hãy thêm vào "Ai ở đâu".`);
+      extra.forEach((t) => assets.delete(t));
+      list = list.filter((t) => !extra.includes(t));
+    }
+
     const firstFrame = str(c?.firstFrame, 1200);
     const lastFrame = str(c?.lastFrame, 1200);
+    if (!lastFrame) warnings.push(`${id} chưa có "Khung cuối" — clip sau không có chỗ bắt đầu để liền mạch.`);
     if (mode !== 'nguyen-lieu' && !firstFrame) warnings.push(`${id} dùng chế độ khung đầu nhưng chưa mô tả khung đầu.`);
     if (mode === 'khung-dau-cuoi' && !lastFrame) warnings.push(`${id} dùng chế độ khung đầu + cuối nhưng chưa mô tả khung cuối.`);
     if (mode !== 'nguyen-lieu' && firstFrame) {
@@ -297,6 +310,9 @@ export interface ClipPromptRequest {
   state: string;
   timeOfDay: string;
   feedback: string;
+  /** Clip ngay trước cùng bối cảnh: khung cuối (chữ) và tag ảnh khung cuối thật nếu người dùng đã lưu */
+  prevEnd?: string;
+  prevFrameTag?: string;
 }
 
 const aspectLine = (aspect: string) => (aspect === '16:9' ? 'Horizontal 16:9' : 'Vertical 9:16');
@@ -317,7 +333,7 @@ ${headers}
 
 Trả "shots" đúng ${c.shots.length} phần tử theo thứ tự.
 ${c.mode === 'nguyen-lieu' ? 'Chế độ nguyên liệu: mở mỗi thân shot bằng vị trí (trái/phải, gần/xa) rồi mới tới hành động. "firstFrame", "lastFrame" để rỗng.' : ''}${c.mode === 'khung-dau' ? 'Chế độ khung đầu: không tả lại bố cục trong thân shot, chỉ tả chuyển động. Viết "firstFrame" từ dòng Khung đầu; "lastFrame" để rỗng.' : ''}${c.mode === 'khung-dau-cuoi' ? 'Chế độ khung đầu + cuối: thân shot tả quá trình đi từ khung đầu tới khung cuối. Viết cả "firstFrame" và "lastFrame".' : ''}
-Trạng thái bối cảnh trước clip (dịch vào "state"): ${r.state || '(không có)'}${r.feedback ? `\n\nGóp ý của người dùng cho lần biên dịch này: ${r.feedback}` : ''}`;
+Trạng thái bối cảnh trước clip (dịch vào "state"): ${r.state || '(không có)'}${r.prevEnd ? `\nKhung cuối của clip trước (clip này bắt đầu từ đây — shot 1 phải khớp vị trí này): ${r.prevEnd}` : ''}${r.feedback ? `\n\nGóp ý của người dùng cho lần biên dịch này: ${r.feedback}` : ''}`;
   return buildStepPrompt({
     step: '5-prompt',
     scriptType: r.settings.scriptType,
@@ -343,7 +359,7 @@ export function assembleClipPrompt(raw: any, r: ClipPromptRequest): ClipPrompt {
 
   // [1] style · [2] bối cảnh
   const block1 = `${r.assets.style}. ${aspectLine(r.settings.aspect)}.`;
-  const block2 = [`Location: @${c.location} (${loc?.desc || c.location}).`, time ? `${time}.` : '', state ? `Current state: ${state}` : ''].filter(Boolean).join(' ');
+  const block2 = [`Location: ${loc?.desc || c.location}.`, time ? `${time}.` : '', state ? `Current state: ${state}` : ''].filter(Boolean).join(' ');
 
   // [3] tham chiếu
   let block3 = '';
@@ -351,14 +367,19 @@ export function assembleClipPrompt(raw: any, r: ClipPromptRequest): ClipPrompt {
   if (c.mode === 'nguyen-lieu') {
     const order = (t: string) => ['character', 'prop', 'variant', 'angle'].indexOf(index.get(t)?.kind || 'angle');
     load = [...c.assets].sort((a, b) => order(a) - order(b));
+    // Khung cuối thật của clip trước (nếu đã lưu ở bước Duyệt) đi cuối danh sách: giữ phòng, vị trí đồ vật, nhân vật liền mạch
+    const continuity = r.prevFrameTag && !load.includes(r.prevFrameTag) ? r.prevFrameTag : '';
+    if (continuity) load.push(continuity);
     const hasVariant = (parent: string) => load.some((t) => index.get(t)?.parent === parent);
-    const lines = load.map((t) => {
+    const lines = load.map((t, i) => {
       const ref = index.get(t);
-      if (!ref) return `${tagged(t, index)}: reference.`;
-      if (ref.kind === 'character') return `${tagged(t, index)}: character reference.`;
-      if (ref.kind === 'prop') return `${tagged(t, index)}: prop reference${hasVariant(t) ? ', the object before it changes' : ''}.`;
-      if (ref.kind === 'variant') return `${tagged(t, index)}: prop reference, the same object after it changes.`;
-      return `${tagged(t, index)}: location reference for the shots filmed from this angle; match this view.`;
+      const head = `Image ${i + 1} — `;
+      if (t === continuity) return `${head}@${t} (the final frame of the previous clip): continuity reference — keep the room, object positions and character designs exactly as shown; this clip continues from that moment.`;
+      if (!ref) return `${head}${tagged(t, index)}: reference.`;
+      if (ref.kind === 'character') return `${head}${tagged(t, index)}: character reference.`;
+      if (ref.kind === 'prop') return `${head}${tagged(t, index)}: prop reference${hasVariant(t) ? ', the object before it changes' : ''}.`;
+      if (ref.kind === 'variant') return `${head}${tagged(t, index)}: prop reference, the same object after it changes.`;
+      return `${head}${tagged(t, index)}: location reference for the shots filmed from this angle; match this view.`;
     });
     block3 = `${lines.join('\n')}\nUse the given images as references for the video. They are not the first frame.`;
     if (load.length > maxRefs) warnings.push(`Clip cần ${load.length} ảnh nguyên liệu, vượt giới hạn ${maxRefs}.`);
