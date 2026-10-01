@@ -1,0 +1,6 @@
+{
+  "name": "XƯỞNG PHIM 2",
+  "description": "Từ ý tưởng tới prompt cho Google Flow (Gemini Omni Flash). Luật nằm trong thư mục knowledge/, sửa file là đổi cách app làm việc.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

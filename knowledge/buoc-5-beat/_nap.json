@@ -1,0 +1,29 @@
+{
+  "ten": "Bước 5 — Từng beat → prompt",
+  "tac_vu": {
+    "beat": {
+      "mo_ta": "Viết đầu vào PromptLabs cho một beat (3.4 → 3.10)",
+      "file": ["../chung/00_cach-dung.md", "../chung/01_nguyen-tac-van-hanh.md", "../chung/02_phan-0_tam-nguyen-nhan-goc.md", "50_vai-tro-khoi-dong.md", "51_quy-trinh-beat.md", "52_thiet-lap.md", "53_anh-tham-chieu.md", "54_viet-o-script.md", "55_chia-shot.md", "56_dao-cu-buoc-3.md", "57_dinh-dang-xuat.md", "58_giu-nguyen-goc.md", "59_phu-luc-promptlabs.md"],
+      "module": ["gioi-thieu", "manh-yeu", "rui-ro", "luat", "am-thanh", "vi-du"],
+      "kieu_kich_ban": ["5", "6"]
+    },
+    "doc-frame": {
+      "mo_ta": "Đọc + chấm frame người dùng chụp từ video",
+      "file": ["53_anh-tham-chieu.md"],
+      "module": [],
+      "kieu_kich_ban": []
+    },
+    "chan-doan": {
+      "mo_ta": "Frame kém → chẩn đoán theo quy trình khi beat chạy ra hỏng",
+      "file": ["../chung/02_phan-0_tam-nguyen-nhan-goc.md", "5A_quy-trinh-khi-hong.md", "54_viet-o-script.md"],
+      "module": ["gioi-thieu", "rui-ro", "luat"],
+      "kieu_kich_ban": ["5", "6"]
+    },
+    "ra-soat": {
+      "mo_ta": "AI rà soát đầu vào của một beat trước khi tạo prompt",
+      "file": ["../chung/02_phan-0_tam-nguyen-nhan-goc.md", "51_quy-trinh-beat.md", "54_viet-o-script.md", "55_chia-shot.md", "56_dao-cu-buoc-3.md", "90_ra-soat.md"],
+      "module": ["gioi-thieu", "rui-ro", "luat"],
+      "kieu_kich_ban": ["5", "6"]
+    }
+  }
+}

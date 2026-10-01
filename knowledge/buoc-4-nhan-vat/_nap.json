@@ -1,0 +1,23 @@
+{
+  "ten": "Bước 4 — Nhân vật & đạo cụ",
+  "tac_vu": {
+    "thiet-ke": {
+      "mo_ta": "Thiết kế nhân vật và ★ đạo cụ, viết prompt ảnh và ô Note",
+      "file": ["40_thiet-ke.md", "../buoc-5-beat/53_anh-tham-chieu.md"],
+      "module": ["gioi-thieu", "thiet-ke", "style"],
+      "kieu_kich_ban": ["4", "6"]
+    },
+    "quet-anh": {
+      "mo_ta": "Quét ảnh người dùng gửi, gán @tag",
+      "file": ["../buoc-5-beat/53_anh-tham-chieu.md"],
+      "module": [],
+      "kieu_kich_ban": []
+    },
+    "ra-soat": {
+      "mo_ta": "AI rà soát thiết kế so với kịch bản",
+      "file": ["40_thiet-ke.md", "../buoc-5-beat/53_anh-tham-chieu.md", "90_ra-soat.md"],
+      "module": ["gioi-thieu", "thiet-ke"],
+      "kieu_kich_ban": ["4", "6"]
+    }
+  }
+}

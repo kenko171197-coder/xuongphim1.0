@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Courier New", monospace;
+
+  --color-paper: #f3f5f7;
+  --color-card: #ffffff;
+  --color-ink: #23262d;
+  --color-mute: #5d6573;
+  --color-line: #d8dde4;
+  --color-tape: #ffdd00;
+  --color-tape-soft: #fff6b8;
+  --color-bad: #b8382e;
+  --color-bad-soft: #fbeceb;
+  --color-good: #1f7a4d;
+  --color-good-soft: #e7f4ec;
+}
+
+html, body, #root { height: 100%; }
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Tag như miếng băng dính dán trên đạo cụ phim trường */
+.tape {
+  display: inline-block;
+  background: var(--color-tape);
+  color: var(--color-ink);
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  font-weight: 600;
+  padding: 0.05em 0.45em;
+  clip-path: polygon(2% 0, 98% 4%, 100% 96%, 0 100%);
+  white-space: nowrap;
+}
+
+.prose-block { max-width: 72ch; }
+
+:focus-visible { outline: 2px solid var(--color-ink); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner {
+  width: 1em; height: 1em; border-radius: 9999px;
+  border: 2px solid currentColor; border-right-color: transparent;
+  animation: spin 0.8s linear infinite; display: inline-block; vertical-align: -0.15em;
+}

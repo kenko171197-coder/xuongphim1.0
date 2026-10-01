@@ -1,0 +1,23 @@
+{
+  "ten": "Bước 1 — Ý tưởng",
+  "tac_vu": {
+    "y-tuong": {
+      "mo_ta": "Sinh thẻ ý tưởng (Phòng Ý tưởng)",
+      "file": ["../chung/00_cach-dung.md", "../chung/02_phan-0_tam-nguyen-nhan-goc.md", "10_nhan-y-tuong.md", "11_khung-truyen.md"],
+      "module": ["gioi-thieu", "manh-yeu", "rui-ro", "khung"],
+      "kieu_kich_ban": "tat-ca"
+    },
+    "sua": {
+      "mo_ta": "Sửa thẻ ý tưởng theo kết quả rà soát",
+      "file": ["../chung/02_phan-0_tam-nguyen-nhan-goc.md", "10_nhan-y-tuong.md", "11_khung-truyen.md"],
+      "module": ["gioi-thieu", "manh-yeu", "rui-ro", "khung"],
+      "kieu_kich_ban": "tat-ca"
+    },
+    "ra-soat": {
+      "mo_ta": "AI rà soát ý tưởng của dự án trước khi sang bước sau",
+      "file": ["../chung/02_phan-0_tam-nguyen-nhan-goc.md", "11_khung-truyen.md", "90_ra-soat.md"],
+      "module": ["gioi-thieu", "manh-yeu", "rui-ro", "khung"],
+      "kieu_kich_ban": ["1", "2", "3", "6"]
+    }
+  }
+}

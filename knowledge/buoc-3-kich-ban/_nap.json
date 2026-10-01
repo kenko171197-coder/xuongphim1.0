@@ -1,0 +1,23 @@
+{
+  "ten": "Bước 3 — Đề cương & kịch bản",
+  "tac_vu": {
+    "de-cuong": {
+      "mo_ta": "Viết đề cương: tính cách (1.3), đạo cụ (1.5), chia hồi → scene",
+      "file": ["../chung/01_nguyen-tac-van-hanh.md", "../chung/02_phan-0_tam-nguyen-nhan-goc.md", "../buoc-1-y-tuong/11_khung-truyen.md", "30_tinh-cach.md", "31_chia-beat.md", "32_dao-cu.md"],
+      "module": ["gioi-thieu", "manh-yeu", "rui-ro", "khung", "luat", "style"],
+      "kieu_kich_ban": ["1", "2", "3", "4", "5", "6"]
+    },
+    "scene": {
+      "mo_ta": "Viết beat cho một scene (1.4 → 1.6, xuất theo 1.7)",
+      "file": ["../chung/00_cach-dung.md", "../chung/01_nguyen-tac-van-hanh.md", "../chung/02_phan-0_tam-nguyen-nhan-goc.md", "30_tinh-cach.md", "31_chia-beat.md", "32_dao-cu.md", "33_bang-kiem.md", "34_cau-truc-xuat.md"],
+      "module": ["gioi-thieu", "manh-yeu", "rui-ro", "khung", "luat", "am-thanh"],
+      "kieu_kich_ban": ["1", "3", "4", "5", "6"]
+    },
+    "ra-soat": {
+      "mo_ta": "AI rà soát độc lập một scene hoặc cả phim",
+      "file": ["../chung/02_phan-0_tam-nguyen-nhan-goc.md", "31_chia-beat.md", "32_dao-cu.md", "33_bang-kiem.md", "../buoc-5-beat/55_chia-shot.md", "90_ra-soat.md"],
+      "module": ["gioi-thieu", "manh-yeu", "rui-ro", "luat"],
+      "kieu_kich_ban": ["3", "6"]
+    }
+  }
+}
